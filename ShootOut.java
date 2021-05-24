@@ -37,7 +37,7 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
     JLabel titleLabel;
     JButton levelButton, powerUpsButton, characterSelectButton, instructionButton;
     JCheckBox safety, easy, normal, hard, merciless, char1, char2, char3;
-    Image backArrowImage, mainBackground;
+    Image levelImage, powerUpImage, characterSelectImage, instructionsImage, backArrowImage, mainBackground;
     int lives, bossNum, charNum;
     MenuManager menuManager;
 
@@ -45,71 +45,25 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
     {
         lives = 10;
         charNum = 1;
+        levelImage = new ImageIcon("Levels.png").getImage();
+        powerUpImage = new ImageIcon("PowerUps.png").getImage();
+        characterSelectImage = new ImageIcon("SelectCharacter.png").getImage();
+        instructionsImage = new ImageIcon("Instructions.png").getImage();
         backArrowImage = new ImageIcon("back_arrow.png").getImage();
-        mainBackground = new ImageIcon("ShootOutBackground.png").getImage();
+        mainBackground = new ImageIcon("ShootOutBackground.jpeg").getImage();
     }
 
     public void addComponentToPane(Container pane) //makes the panels for the menus and organizes them
     {
-        mainCard = new MainPanel(mainBackground);
-        mainCard.setLayout(new BorderLayout());
-        menuPanel = new JPanel();
-
-        menuPanel.setPreferredSize(new Dimension(500,630));
-        menuPanel.setLayout(new GridLayout(5,1));
-        titleLabel = new JLabel("Shoot-Out!");
-        titleLabel.setFont(new Font("Serif", Font.PLAIN, 50));
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        menuPanel.add(titleLabel);
-        levelButton = new JButton("Levels");
-        levelButton.setPreferredSize(new Dimension(500,110));
-        levelButtonHandler levelHandler = new levelButtonHandler();
-        levelButton.addActionListener(levelHandler);
-        powerUpsButton = new JButton("Power-Ups");
-        powerUpsButton.setPreferredSize(new Dimension(500,110));
-        powerUpButtonHandler powerUpHandler = new powerUpButtonHandler();
-        powerUpsButton.addActionListener(powerUpHandler);
-        characterSelectButton = new JButton("Select Character");
-        characterSelectButton.setPreferredSize(new Dimension(500,110));
-        characterSelectButtonHandler characterSelectHandler = new characterSelectButtonHandler();
-        characterSelectButton.addActionListener(characterSelectHandler);
-        instructionButton = new JButton("Instructions");
-        instructionButton.setPreferredSize(new Dimension(500,110));
-        instructionButtonHandler instructionHandler = new instructionButtonHandler();
-        instructionButton.addActionListener(instructionHandler);
-
-        JPanel fillerPanelEast, fillerPanelWest, fillerPanelNorth, fillerPanelSouth;
-        menuPanel.add(titleLabel);
-        menuPanel.add(levelButton);
-        menuPanel.add(powerUpsButton);
-        menuPanel.add(characterSelectButton);
-        menuPanel.add(instructionButton);
-        fillerPanelEast = new JPanel();
-        fillerPanelWest = new JPanel();
-        fillerPanelNorth = new JPanel();
-        fillerPanelSouth = new JPanel();
-        fillerPanelEast.setPreferredSize(new Dimension(310, 630));
-        fillerPanelWest.setPreferredSize(new Dimension(310, 630));
-        fillerPanelNorth.setPreferredSize(new Dimension(310, 10));
-        fillerPanelSouth.setPreferredSize(new Dimension(310, 10));
-        mainCard.add(fillerPanelEast, BorderLayout.EAST);
-        mainCard.add(fillerPanelWest, BorderLayout.WEST);
-        //mainCard.add(fillerPanelNorth, BorderLayout.NORTH);
-        mainCard.add(fillerPanelSouth, BorderLayout.SOUTH);
-        mainCard.add(menuPanel, BorderLayout.CENTER);
+        buildMenuCard();
 
         buildLevelCard();
 
-
-        powerUpsCard = new JPanel();
-
+        buildPowerUpCard();
 
         buildCharacterSelectCard();
 
-
         buildInstructionsCard();
-
-
 
         cards = new JPanel(new CardLayout());
         menuManager = new MenuManager(cards);
@@ -123,31 +77,66 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
         cards.add(bossCard);
 
         pane.add(cards, BorderLayout.CENTER);
-
     }
-    
-    class MainPanel extends JPanel {
 
-        private Image img;
 
-        public MainPanel(String img) {
-            this(new ImageIcon(img).getImage());
-        }
+    class MainPanel extends JPanel //this class is used to set the background image of the main panel
+    {
 
-        public MainPanel(Image img) {
-            this.img = img;
-            Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
+        Image backgroundImage;
+        public MainPanel(Image img) //this constructor is used to bring the image into the class and set its dimension and size
+        {
+            backgroundImage = img;
+            Dimension size = new Dimension(1120,630);
             setPreferredSize(size);
             setMinimumSize(size);
             setMaximumSize(size);
             setSize(size);
-            setLayout(null);
         }
 
-        public void paintComponent(Graphics g) {
-            g.drawImage(img, 0, 0, null);
+        public void paintComponent(Graphics g) //this method draws the background image
+        {
+            g.drawImage(backgroundImage, 0, 0, 1120, 630, null);
         }
+    }
 
+    public void buildMenuCard() //this method makes the menu card with the buttons and background image
+    {
+        mainCard = new MainPanel(mainBackground);
+        mainCard.setVisible(true);
+        mainCard.setLayout(null);
+        menuPanel = new JPanel();
+
+        titleLabel = new JLabel("Shoot-Out!");
+        titleLabel.setFont(new Font("Serif", Font.PLAIN, 70));
+        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        titleLabel.setBounds(710, 100, 360, 75);
+
+        levelButton = new JButton(new ImageIcon(levelImage.getScaledInstance(300,75,Image.SCALE_DEFAULT), ""));
+        levelButtonHandler levelHandler = new levelButtonHandler();
+        levelButton.addActionListener(levelHandler);
+        levelButton.setBounds(700, 175, 300, 75);
+
+        powerUpsButton = new JButton(new ImageIcon(powerUpImage.getScaledInstance(300,75,Image.SCALE_DEFAULT), ""));
+        powerUpButtonHandler powerUpHandler = new powerUpButtonHandler();
+        powerUpsButton.addActionListener(powerUpHandler);
+        powerUpsButton.setBounds(660, 250, 300, 75);
+
+        characterSelectButton = new JButton(new ImageIcon(characterSelectImage.getScaledInstance(300,75,Image.SCALE_DEFAULT), ""));
+        characterSelectButtonHandler characterSelectHandler = new characterSelectButtonHandler();
+        characterSelectButton.addActionListener(characterSelectHandler);
+        characterSelectButton.setBounds(620, 325, 300, 75);
+
+        instructionButton = new JButton(new ImageIcon(instructionsImage.getScaledInstance(300,75,Image.SCALE_DEFAULT), ""));
+        instructionButtonHandler instructionHandler = new instructionButtonHandler();
+        instructionButton.addActionListener(instructionHandler);
+        instructionButton.setBounds(565, 400, 300, 75);
+
+        mainCard.add(titleLabel);
+        mainCard.add(levelButton);
+        mainCard.add(powerUpsButton);
+        mainCard.add(characterSelectButton);
+        mainCard.add(instructionButton);
     }
 
     public void buildLevelCard() // this method makes the level card with all the levels and difficulties
@@ -282,71 +271,9 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
         levelsCard.add(fillerPanelSouth2, BorderLayout.SOUTH);
     }
 
-    public void buildInstructionsCard() { //this method makes the instructions card
-        instructionsCard = new JPanel();
-        instructionsCard.setLayout(new BorderLayout());
-        JPanel instructionsPanel = new JPanel();
-        //instructionsPanel.setPreferredSize(new Dimension(100,500));
-        JButton backButton = new JButton(new ImageIcon(backArrowImage.getScaledInstance(60,60,Image.SCALE_DEFAULT), ""));
-        backButton.setPreferredSize(new Dimension(60,60));
-        BackButtonHandler backButtonHandler = new BackButtonHandler();
-        backButton.addActionListener(backButtonHandler);
-        JPanel backButtonPanel = new JPanel();
-        backButtonPanel.setPreferredSize(new Dimension(500,85));
-        backButtonPanel.add(backButton);
-
-        instructionsPanel.setLayout(new GridLayout(2,1));
-        JLabel instructionsLabel = new JLabel("Instructions:");
-        instructionsLabel.setHorizontalAlignment(JLabel.CENTER);
-        instructionsLabel.setFont(new Font("Serif", Font.PLAIN, 50));
-
-        /*
-        JTextArea instructionsTextArea = new JTextArea("W to aim up\nA to move left\nS to crouch\nD to move right\nJ or Space Bar to jump\nK to shoot\nL to dash\nEscape Key or Pause Button to pause");
-        instructionsTextArea.setFont(new Font("Serif", Font.PLAIN, 30));
-        instructionsTextArea.setPreferredSize(new Dimension(500, 1000));
-        */
-
-        //I had originally used a JTextArea, but switched to JTextPane so that I could center text and make a clear background
-        JTextPane instructionsTextPane = new JTextPane();
-        instructionsTextPane.setText("\nW to aim up\n\nA to move left\n\nS to crouch\n\nD to move right\n\nJ or Space Bar to jump\n\nK to shoot\n\nL to dash\n\nEscape Key or Pause Button to pause");
-        instructionsTextPane.setFont(new Font("Serif", Font.PLAIN, 30));
-        instructionsTextPane.setPreferredSize(new Dimension(500, 1000));
-        instructionsTextPane.setBackground(null);
-        SimpleAttributeSet attributes = new SimpleAttributeSet();
-        StyleConstants.setAlignment(attributes, StyleConstants.ALIGN_CENTER);
-
-        StyledDocument doc = instructionsTextPane.getStyledDocument();
-        doc.setParagraphAttributes(0, doc.getLength(), attributes, false);
-
-        JPanel instructionsTextPanel = new JPanel();
-        instructionsTextPanel.setPreferredSize(new Dimension(500, 510));
-        instructionsTextPanel.setLayout(new BorderLayout());
-        instructionsTextPanel.add(instructionsLabel, BorderLayout.NORTH);
-        //instructionsTextPanel.add(instructionsTextArea, BorderLayout.CENTER);
-        instructionsTextPanel.add(instructionsTextPane, BorderLayout.CENTER);
-
-        JPanel emptyPanelBottom = new JPanel();
-        emptyPanelBottom.setPreferredSize(new Dimension(500, 10));
-
-        JPanel emptyRightPanel = new JPanel();
-        emptyRightPanel.setPreferredSize(new Dimension(200, 10));
-
-        JPanel emptyLeftPanel = new JPanel();
-        emptyLeftPanel.setPreferredSize(new Dimension(200, 10));
-
-        JPanel instructionAndBackPanel = new JPanel();
-        instructionAndBackPanel.setPreferredSize(new Dimension(1000, 500));
-        instructionAndBackPanel.setLayout(new BorderLayout());
-
-
-        instructionAndBackPanel.add(backButtonPanel, BorderLayout.NORTH);
-        instructionAndBackPanel.add(instructionsTextPanel, BorderLayout.CENTER);
-        instructionAndBackPanel.add(emptyRightPanel, BorderLayout.EAST);
-        instructionAndBackPanel.add(emptyLeftPanel, BorderLayout.WEST);
-
-        instructionsPanel.add(instructionAndBackPanel, BorderLayout.CENTER);
-        instructionsPanel.add(emptyPanelBottom, BorderLayout.SOUTH);
-        instructionsCard.add(instructionsPanel, BorderLayout.NORTH);
+    public void buildPowerUpCard() //this method makes the power up card
+    {
+        powerUpsCard = new JPanel();
     }
 
     public void buildCharacterSelectCard() //this method makes the character select card
@@ -412,10 +339,73 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
         characterSelectCard.add(fillerPanelSouth3, BorderLayout.SOUTH);
     }
 
-    public void actionPerformed(ActionEvent evt) //this method handles input through buttons pressed
+    public void buildInstructionsCard() //this method makes the instructions card
     {
+        instructionsCard = new JPanel();
+        instructionsCard.setLayout(new BorderLayout());
+        JPanel instructionsPanel = new JPanel();
+        //instructionsPanel.setPreferredSize(new Dimension(100,500));
+        JButton backButton = new JButton(new ImageIcon(backArrowImage.getScaledInstance(60,60,Image.SCALE_DEFAULT), ""));
+        backButton.setPreferredSize(new Dimension(60,60));
+        BackButtonHandler backButtonHandler = new BackButtonHandler();
+        backButton.addActionListener(backButtonHandler);
+        JPanel backButtonPanel = new JPanel();
+        backButtonPanel.setPreferredSize(new Dimension(500,85));
+        backButtonPanel.add(backButton);
 
+        instructionsPanel.setLayout(new GridLayout(2,1));
+        JLabel instructionsLabel = new JLabel("Instructions:");
+        instructionsLabel.setHorizontalAlignment(JLabel.CENTER);
+        instructionsLabel.setFont(new Font("Serif", Font.PLAIN, 50));
+
+        /*
+        JTextArea instructionsTextArea = new JTextArea("W to aim up\nA to move left\nS to crouch\nD to move right\nJ or Space Bar to jump\nK to shoot\nL to dash\nEscape Key or Pause Button to pause");
+        instructionsTextArea.setFont(new Font("Serif", Font.PLAIN, 30));
+        instructionsTextArea.setPreferredSize(new Dimension(500, 1000));
+        */
+
+        //I had originally used a JTextArea, but switched to JTextPane so that I could center text and make a clear background
+        JTextPane instructionsTextPane = new JTextPane();
+        instructionsTextPane.setText("\nW to aim up\n\nA to move left\n\nS to crouch\n\nD to move right\n\nJ or Space Bar to jump\n\nK to shoot\n\nL to dash\n\nEscape Key or Pause Button to pause");
+        instructionsTextPane.setFont(new Font("Serif", Font.PLAIN, 30));
+        instructionsTextPane.setPreferredSize(new Dimension(500, 1000));
+        instructionsTextPane.setBackground(null);
+        SimpleAttributeSet attributes = new SimpleAttributeSet();
+        StyleConstants.setAlignment(attributes, StyleConstants.ALIGN_CENTER);
+
+        StyledDocument doc = instructionsTextPane.getStyledDocument();
+        doc.setParagraphAttributes(0, doc.getLength(), attributes, false);
+
+        JPanel instructionsTextPanel = new JPanel();
+        instructionsTextPanel.setPreferredSize(new Dimension(500, 510));
+        instructionsTextPanel.setLayout(new BorderLayout());
+        instructionsTextPanel.add(instructionsLabel, BorderLayout.NORTH);
+        instructionsTextPanel.add(instructionsTextPane, BorderLayout.CENTER);
+
+        JPanel emptyPanelBottom = new JPanel();
+        emptyPanelBottom.setPreferredSize(new Dimension(500, 10));
+
+        JPanel emptyRightPanel = new JPanel();
+        emptyRightPanel.setPreferredSize(new Dimension(200, 10));
+
+        JPanel emptyLeftPanel = new JPanel();
+        emptyLeftPanel.setPreferredSize(new Dimension(200, 10));
+
+        JPanel instructionAndBackPanel = new JPanel();
+        instructionAndBackPanel.setPreferredSize(new Dimension(1000, 500));
+        instructionAndBackPanel.setLayout(new BorderLayout());
+
+        instructionAndBackPanel.add(backButtonPanel, BorderLayout.NORTH);
+        instructionAndBackPanel.add(instructionsTextPanel, BorderLayout.CENTER);
+        instructionAndBackPanel.add(emptyRightPanel, BorderLayout.EAST);
+        instructionAndBackPanel.add(emptyLeftPanel, BorderLayout.WEST);
+
+        instructionsPanel.add(instructionAndBackPanel, BorderLayout.CENTER);
+        instructionsPanel.add(emptyPanelBottom, BorderLayout.SOUTH);
+        instructionsCard.add(instructionsPanel, BorderLayout.NORTH);
     }
+
+    public void actionPerformed(ActionEvent evt) {} //this method handles input through buttons pressed
 
     class levelButtonHandler implements ActionListener //This buttonHandler takes user to level card
     {
@@ -514,8 +504,10 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
             bossCard.resetGame(lives, bossNum, charNum);
         }
     }
-    class CheckBoxListener implements ActionListener { //this class makes the checkboxes used to select difficulty and character
-        public void actionPerformed(ActionEvent e) { //this method makes the checkboxes used to select difficulty and character
+    class CheckBoxListener implements ActionListener //this class makes the checkboxes used to select difficulty and character
+    {
+        public void actionPerformed(ActionEvent e) //this method makes the checkboxes used to select difficulty and character
+        {
             String cmd = e.getActionCommand();
             switch (cmd) {
                 case "Safety":
@@ -620,7 +612,11 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
     Image char3DuckingRight, char3DuckingLeft, char3NormalRight, char3NormalLeft, char3RunningRight, char3RunningLeft;
     Image bulletLeft, bulletUpLeft, bulletUp, bulletUpRight, bulletRight;
     Image boss1Background, boss2Background, boss3Background, boss4Background, boss5Background;
+    //Image boss1
+    Image boss2Normal, boss2Attacking;
+    Image boss3Left, boss3Right;
     Image boss4Normal, boss4Attacking;
+    Image boss5Normal, boss5SharkLeft, boss5SharkRight;
     Image boss4ProjectileLeft, boss4ProjectileRight, boss4ProjectileDown, boss4ProjectileUp, boss4ProjectileUpRight, boss4ProjectileUpLeft, boss4ProjectileDownRight, boss4ProjectileDownLeft;
     Jumper jumper;
     MoveLeft leftMover;
@@ -696,8 +692,18 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         boss4Background = new ImageIcon("Boss4Background.jpeg").getImage();
         boss5Background = new ImageIcon("Boss5Background.jpeg").getImage();
 
+        boss2Normal = new ImageIcon("boss2Normal.png").getImage();
+        boss2Attacking = new ImageIcon("boss2Attacking.png").getImage();
+
+        boss3Left = new ImageIcon("boss3Left.png").getImage();
+        boss3Right = new ImageIcon("boss3Right.png").getImage();
+
         boss4Normal = new ImageIcon("boss4Normal.png").getImage();
         boss4Attacking = new ImageIcon("boss4Attacking.png").getImage();
+
+        boss5Normal = new ImageIcon("boss5Normal.png").getImage();
+        boss5SharkLeft = new ImageIcon("boss5SharkLeft.png").getImage();
+        boss5SharkRight = new ImageIcon("boss5SharkRight.png").getImage();
 
         boss4ProjectileLeft = new ImageIcon("boss4ProjectileLeft.png").getImage();
         boss4ProjectileRight = new ImageIcon("boss4ProjectileRight.png").getImage();
@@ -774,12 +780,6 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         characterWidth = 100;
         characterHeight = 140;
         jumpNum = 0;
-        jumper = new Jumper();
-        jumpTimer = new Timer(10, jumper);
-        leftMover = new MoveLeft();
-        leftTimer = new Timer(10,leftMover);
-        rightMover = new MoveRight();
-        rightTimer = new Timer(10, rightMover);
         bullets = new Bullet[100000];
         bulletCount = 0;
         crouching = false;
@@ -827,21 +827,17 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
             bossHealth = 1000;
             startingBossHealth = 1000;
         }
-
         repaint();
     }
-    public void paintComponent(Graphics g) //this creates the objects inside the frame
+    public void paintComponent(Graphics g) //this creates the objects inside the frame such as the boss, main character, background, health bar, pause button, and exit button
     {
         super.paintComponent(g);
-
-
 
         if(liveCount <= 0)
         {
             deathScreen(g);
             return;
         }
-
 
         if(bossHealth <= 0)
         {
@@ -972,21 +968,10 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         }
     }
 
-    public void paintBullets(Graphics g) //this method loads and paints every bullet that has been loaded
-    {
-        for(int i = 0; i < bulletCount; i++)
-        {
-            if(i >= bulletCount) return;
-            bullets[i].paintBullet(g);
-        }
-    }
-
-    public void keyTyped(KeyEvent e) //Used to handle when a key is typed
-    {
-        char charOfKeyTyped = e.getKeyChar();
-    }
+    public void keyTyped(KeyEvent e) {} //Used to handle when a key is typed
     
-    public void keyPressed(KeyEvent e) { //Used to handle when a key is pressed and allow the user to move around
+    public void keyPressed(KeyEvent e)  //Used to handle when a key is pressed and allow the user to move around 
+    {
         int key = e.getKeyCode();
         if(liveCount <= 0)
         {
@@ -1060,7 +1045,8 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
                 break;
         }
     }
-    public void keyReleased(KeyEvent e) { //handles when a key is released to stop moving
+    public void keyReleased(KeyEvent e) //handles when a key is released to stop moving 
+    { 
         int key = e.getKeyCode();
         if(liveCount <= 0)
         {
@@ -1224,17 +1210,26 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         if(bossNum == 5) boss5Timer.start();
         repaint();
     }
+    public void paintBullets(Graphics g) //this method loads and paints every bullet that has been loaded
+    {
+        for(int i = 0; i < bulletCount; i++)
+        {
+            if(i >= bulletCount) return;
+            bullets[i].paintBullet(g);
+        }
+    }
     public void drawBoss1(Graphics g) //this method draws boss 1, when level 1 is being played
     {
 
     }
     public void drawBoss2(Graphics g) //this method draws boss 2, when level 2 is being played
     {
-
+        if(!attacking) g.drawImage(boss2Normal, 820,144,200,406, null);
+        else g.drawImage(boss2Attacking, 450,130,219,368, null);
     }
     public void drawBoss3(Graphics g) //this method draws boss 3, when level 3 is being played
     {
-
+        g.drawImage(boss3Left,730, 250, 290, 300, null);
     }
     public void drawBoss4(Graphics g) //this method draws boss 4, when level 4 is being played
     {
@@ -1243,7 +1238,7 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
     }
     public void drawBoss5(Graphics g) //this method draws boss 5, when level 5 is being played
     {
-
+        g.drawImage(boss5Normal,767, 162, 253, 358, null);
     }
     public void deathScreen(Graphics g) //this method handles when the character's lives reach 0
     {
@@ -1356,9 +1351,9 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
             repaint();
         }
     }
-    class Shoot implements ActionListener
+    class Shoot implements ActionListener //This class is set on a timer to let the player shoot at a consistent rate
     {
-        public void actionPerformed(ActionEvent e)
+        public void actionPerformed(ActionEvent e) //This method is set on a timer to let the player shoot at a consistent rate
         {
             bullets[bulletCount] = new Bullet(characterXVal, characterYVal,true, movingLeft, movingRight, facingUp, false, facingLeft, facingRight, characterHeight, characterWidth);
             bulletCount++;
@@ -1561,30 +1556,30 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
             attackTimer.stop();
         }
     }
-    class Boss1 implements ActionListener
+    class Boss1 implements ActionListener //this class is set on a timer to allow the boss to attack at a consistent rate
     {
-        public void actionPerformed(ActionEvent e)
+        public void actionPerformed(ActionEvent e) //this method is set on a timer to allow the boss to attack at a consistent rate
         {
 
         }
     }
-    class Boss2 implements ActionListener
+    class Boss2 implements ActionListener //this class is set on a timer to allow the boss to attack at a consistent rate
     {
-        public void actionPerformed(ActionEvent e)
+        public void actionPerformed(ActionEvent e) //this method is set on a timer to allow the boss to attack at a consistent rate
         {
 
         }
     }
-    class Boss3 implements ActionListener
+    class Boss3 implements ActionListener //this class is set on a timer to allow the boss to attack at a consistent rate
     {
-        public void actionPerformed(ActionEvent e)
+        public void actionPerformed(ActionEvent e) //this method is set on a timer to allow the boss to attack at a consistent rate
         {
 
         }
     }
-    class Boss4 implements ActionListener
+    class Boss4 implements ActionListener //this class is set on a timer to allow the boss to attack at a consistent rate
     {
-        public void actionPerformed(ActionEvent e)
+        public void actionPerformed(ActionEvent e) //this method is set on a timer to allow the boss to attack at a consistent rate
         {
             attacking = true;
             attackTimer.start();
@@ -1607,9 +1602,9 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
             repaint();
         }
     }
-    class Boss5 implements ActionListener
+    class Boss5 implements ActionListener //this class is set on a timer to allow the boss to attack at a consistent rate
     {
-        public void actionPerformed(ActionEvent e)
+        public void actionPerformed(ActionEvent e) //this method is set on a timer to allow the boss to attack at a consistent rate
         {
 
         }
