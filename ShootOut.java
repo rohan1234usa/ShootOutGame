@@ -16,7 +16,7 @@ public class ShootOut //This class makes the JFrame and runs the panels
         ShootOut game = new ShootOut();
         game.createAndShowGUI();
     }
-    private void createAndShowGUI() //Creates the JFrame and sets its properties
+    public void createAndShowGUI() //Creates the JFrame and sets its properties
     {
         JFrame frame = new JFrame("Shoot-Out!");
         frame.setSize(1120, 630);
@@ -37,7 +37,7 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
     JLabel titleLabel;
     JButton levelButton, powerUpsButton, characterSelectButton, instructionButton;
     JCheckBox safety, easy, normal, hard, merciless, char1, char2, char3;
-    Image backArrowImage;
+    Image backArrowImage, mainBackground;
     int lives, bossNum, charNum;
     MenuManager menuManager;
 
@@ -46,13 +46,15 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
         lives = 10;
         charNum = 1;
         backArrowImage = new ImageIcon("back_arrow.png").getImage();
+        mainBackground = new ImageIcon("ShootOutBackground.png").getImage();
     }
 
     public void addComponentToPane(Container pane) //makes the panels for the menus and organizes them
     {
-        mainCard = new JPanel();
+        mainCard = new MainPanel(mainBackground);
         mainCard.setLayout(new BorderLayout());
         menuPanel = new JPanel();
+
         menuPanel.setPreferredSize(new Dimension(500,630));
         menuPanel.setLayout(new GridLayout(5,1));
         titleLabel = new JLabel("Shoot-Out!");
@@ -123,9 +125,32 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
         pane.add(cards, BorderLayout.CENTER);
 
     }
+    
+    class MainPanel extends JPanel {
 
+        private Image img;
 
-    private void buildLevelCard() // this method makes the level card with all the levels and difficulties
+        public MainPanel(String img) {
+            this(new ImageIcon(img).getImage());
+        }
+
+        public MainPanel(Image img) {
+            this.img = img;
+            Dimension size = new Dimension(img.getWidth(null), img.getHeight(null));
+            setPreferredSize(size);
+            setMinimumSize(size);
+            setMaximumSize(size);
+            setSize(size);
+            setLayout(null);
+        }
+
+        public void paintComponent(Graphics g) {
+            g.drawImage(img, 0, 0, null);
+        }
+
+    }
+
+    public void buildLevelCard() // this method makes the level card with all the levels and difficulties
     {
         levelsCard = new JPanel();
         levelsCard.setLayout(new BorderLayout());
@@ -257,7 +282,7 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
         levelsCard.add(fillerPanelSouth2, BorderLayout.SOUTH);
     }
 
-    private void buildInstructionsCard() { //this method makes the instructions card
+    public void buildInstructionsCard() { //this method makes the instructions card
         instructionsCard = new JPanel();
         instructionsCard.setLayout(new BorderLayout());
         JPanel instructionsPanel = new JPanel();
@@ -588,22 +613,31 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
     int xMouse, yMouse, startingLiveCount, liveCount, characterXVal, characterYVal, characterWidth, characterHeight, jumpDelay, jumpNum, dashNum, characterNum, bossNum, bossHealth, startingBossHealth;
     Bullet[] bullets;
     int bulletCount;
-    Image healthBarImage, bossHealthBarImage, pauseIconImage, playIconImage, backArrowImage, deathScreenImage, exitToMenu;
+    int whichBullet;
+    Image healthBarImage, bossHealthBarImage, pauseIconImage, playIconImage, backArrowImage, winScreenImage, deathScreenImage, exitDeath, exitWin;
     Image char1DuckingRight, char1DuckingLeft, char1NormalRight, char1NormalLeft, char1NormalUpRight, char1NormalUpLeft, char1NormalDiagonalRight, char1NormalDiagonalLeft, char1RunningRight, char1RunningLeft, char1RunningUpRight, char1RunningUpLeft;
     Image char2DuckingRight, char2DuckingLeft, char2NormalRight, char2NormalLeft, char2RunningRight, char2RunningLeft;
     Image char3DuckingRight, char3DuckingLeft, char3NormalRight, char3NormalLeft, char3RunningRight, char3RunningLeft;
     Image bulletLeft, bulletUpLeft, bulletUp, bulletUpRight, bulletRight;
     Image boss1Background, boss2Background, boss3Background, boss4Background, boss5Background;
-    Image boss1Normal, boss1Attacking;
-    Image boss1ProjectileLeft, boss1ProjectileRight, boss1ProjectileDown, boss1ProjectileUp, boss1ProjectileUpRight, boss1ProjectileUpLeft, boss1ProjectileDownRight, boss1ProjectileDownLeft;
+    Image boss4Normal, boss4Attacking;
+    Image boss4ProjectileLeft, boss4ProjectileRight, boss4ProjectileDown, boss4ProjectileUp, boss4ProjectileUpRight, boss4ProjectileUpLeft, boss4ProjectileDownRight, boss4ProjectileDownLeft;
     Jumper jumper;
     MoveLeft leftMover;
     MoveRight rightMover;
     Dash dasher;
     Shoot shooter;
-    Timer jumpTimer, leftTimer, rightTimer, dashTimer, bulletMover, shootTimer;
-    boolean crouching, movingRight, movingLeft, paused, jumping, crouchAfterJump, facingRight, facingLeft, dashing, dashingRight, dashingLeft, facingUp, shooting;
-    Rectangle pauseButton, backButton;
+    Invincible invincibility;
+    Attacking attack;
+    Timer jumpTimer, leftTimer, rightTimer, dashTimer, bulletMover, shootTimer, invincibilityTimer, attackTimer;
+    Boss1 boss1;
+    Boss2 boss2;
+    Boss3 boss3;
+    Boss4 boss4;
+    Boss5 boss5;
+    Timer boss1Timer, boss2Timer, boss3Timer, boss4Timer, boss5Timer;
+    boolean crouching, movingRight, movingLeft, paused, jumping, crouchAfterJump, facingRight, facingLeft, dashing, dashingRight, dashingLeft, facingUp, shooting, invincible, attacking;
+    Rectangle pauseButton, backButton, charHitBox;
     Polygon bossHitBox;
     MenuManager menuManager;
     public BossCardPanel(MenuManager menu) //constructor that sets the initial values of variables
@@ -619,7 +653,9 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         playIconImage = new ImageIcon("play_icon.jpeg").getImage();
         backArrowImage = new ImageIcon("back_arrow_with_white_background.png").getImage();
         deathScreenImage = new ImageIcon("deathScreenImage.jpeg").getImage();
-        exitToMenu = new ImageIcon("exitToMenu.jpeg").getImage();
+        winScreenImage = new ImageIcon("youWin.jpeg").getImage();
+        exitDeath = new ImageIcon("exitToMenu.jpeg").getImage();
+        exitWin = new ImageIcon("exitButtonWin.png").getImage();
 
         char1DuckingRight = new ImageIcon("cuphead_crouching_right.png").getImage();
         char1DuckingLeft = new ImageIcon("cuphead_crouching_left.png").getImage();
@@ -660,18 +696,21 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         boss4Background = new ImageIcon("Boss4Background.jpeg").getImage();
         boss5Background = new ImageIcon("Boss5Background.jpeg").getImage();
 
-        boss1Normal = new ImageIcon("boss1Normal.png").getImage();
-        boss1Attacking = new ImageIcon("boss1Attacking.png").getImage();
+        boss4Normal = new ImageIcon("boss4Normal.png").getImage();
+        boss4Attacking = new ImageIcon("boss4Attacking.png").getImage();
 
-        boss1ProjectileLeft = new ImageIcon("boss1ProjectileLeft.png").getImage();
-        boss1ProjectileRight = new ImageIcon("boss1ProjectileRight.png").getImage();
-        boss1ProjectileDown = new ImageIcon("boss1ProjectileDown.png").getImage();
-        boss1ProjectileUp = new ImageIcon("boss1ProjectileUp.png").getImage();
-        boss1ProjectileUpRight = new ImageIcon("boss1ProjectileUpRight.png").getImage();
-        boss1ProjectileUpLeft = new ImageIcon("boss1ProjectileUpLeft.png").getImage();
-        boss1ProjectileDownRight = new ImageIcon("boss1ProjectileDownRight.png").getImage();
-        boss1ProjectileDownLeft = new ImageIcon("boss1ProjectileDownLeft.png").getImage();
+        boss4ProjectileLeft = new ImageIcon("boss4ProjectileLeft.png").getImage();
+        boss4ProjectileRight = new ImageIcon("boss4ProjectileRight.png").getImage();
+        boss4ProjectileDown = new ImageIcon("boss4ProjectileDown.png").getImage();
+        boss4ProjectileUp = new ImageIcon("boss4ProjectileUp.png").getImage();
+        boss4ProjectileUpRight = new ImageIcon("boss4ProjectileUpRight.png").getImage();
+        boss4ProjectileUpLeft = new ImageIcon("boss4ProjectileUpLeft.png").getImage();
+        boss4ProjectileDownRight = new ImageIcon("boss4ProjectileDownRight.png").getImage();
+        boss4ProjectileDownLeft = new ImageIcon("boss4ProjectileDownLeft.png").getImage();
 
+        int[] xValuesPlaceholder = {-1, -2, -3};
+        int[] yValuesPlaceholder = {-1, -2, -3};
+        bossHitBox = new Polygon(xValuesPlaceholder, yValuesPlaceholder,3);
 
         jumpDelay = 10;
         characterXVal = 90;
@@ -693,6 +732,22 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         bulletMover.start();
         shooter = new Shoot();
         shootTimer = new Timer(200, shooter);
+        invincibility = new Invincible();
+        invincibilityTimer = new Timer(500, invincibility);
+        attack = new Attacking();
+        attackTimer = new Timer(2000, attack);
+
+        boss1 = new Boss1();
+        boss1Timer = new Timer(4000, boss1);
+        boss2 = new Boss2();
+        boss2Timer = new Timer(4000, boss2);
+        boss3 = new Boss3();
+        boss3Timer = new Timer(4000, boss3);
+        boss4 = new Boss4();
+        boss4Timer = new Timer(4000, boss4);
+        boss5 = new Boss5();
+        boss5Timer = new Timer(4000, boss5);
+
         crouching = false;
         movingRight = false;
         movingLeft = false;
@@ -705,13 +760,17 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         facingLeft = false;
         dashing = false;
         shooting = false;
+        invincible = false;
+        attacking = false;
         menuManager = menu;
+
     }
     public void resetGame(int lives, int whichBoss, int whichCharacter) //this method is used to reset the variables everytime the user enters the game
     {
         jumpDelay = 10;
         characterXVal = 90;
         characterYVal = 410;
+        if(whichBoss == 5) characterYVal = 390;
         characterWidth = 100;
         characterHeight = 140;
         jumpNum = 0;
@@ -735,6 +794,8 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         facingRight = true;
         facingLeft = false;
         dashing = false;
+        shooting = false;
+        invincible = false;
         liveCount = lives;
         startingLiveCount = lives;
         bossNum = whichBoss;
@@ -773,9 +834,18 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
     {
         super.paintComponent(g);
 
+
+
         if(liveCount <= 0)
         {
             deathScreen(g);
+            return;
+        }
+
+
+        if(bossHealth <= 0)
+        {
+            winScreen(g);
             return;
         }
 
@@ -783,28 +853,48 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         {
             g.drawImage(boss1Background, 0, 0, 1120, 630, null);
             drawBoss1(g);
+            if(!paused) boss1Timer.start();
         }
         else if(bossNum == 2)
         {
             g.drawImage(boss2Background, 0, 0, 1120, 630, null);
             drawBoss2(g);
+            if(!paused) boss2Timer.start();
         }
         else if(bossNum == 3)
         {
             g.drawImage(boss3Background, 0, 0, 1120, 630, null);
             drawBoss3(g);
+            if(!paused) boss3Timer.start();
         }
         else if(bossNum == 4)
         {
+            if(!attacking)
+            {
+                int[] xValues = {560, 480, 448, 460, 495, 520, 530, 590, 623, 650, 668, 640, 635};
+                int[] yValues = {120, 190, 240, 280, 300, 360, 460, 460, 310, 270, 230, 180, 170};
+                bossHitBox = new Polygon(xValues, yValues, 13);
+            }
+            else
+            {
+                int[] xValues = {554, 500, 505, 450, 510, 530, 590, 606, 662, 610, 613};
+                int[] yValues = {130, 220, 310, 410, 320, 460, 460, 310, 410, 320, 220};
+                bossHitBox = new Polygon(xValues, yValues, 11);
+
+            }
             g.drawImage(boss4Background, 0, 0, 1120, 630, null);
             drawBoss4(g);
+            if(!paused) boss4Timer.start();
         }
         else
         {
             g.drawImage(boss5Background, 0, 0, 1120, 630, null);
             drawBoss5(g);
+            if(!paused) boss5Timer.start();
         }
 
+        charHitBox = new Rectangle(characterXVal, characterYVal, characterWidth, characterHeight);
+        if(characterNum == 3 && !dashingRight && !dashingLeft && !movingRight && !movingLeft) charHitBox = new Rectangle(characterXVal, characterYVal, (int)(characterWidth/1.2), characterHeight);
 
         drawChar(g);
 
@@ -832,7 +922,7 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         paintBullets(g);
     }
 
-    private void drawChar(Graphics g) //this method draws the character being played as
+    public void drawChar(Graphics g) //this method draws the character being played as
     {
         if(characterNum == 1)
         {
@@ -1064,6 +1154,11 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
             leftTimer.stop();
             jumpTimer.stop();
             shootTimer.stop();
+            boss1Timer.stop();
+            boss2Timer.stop();
+            boss3Timer.stop();
+            boss4Timer.stop();
+            boss5Timer.stop();
             menuManager.goToMenu();
         }
         grabFocus();
@@ -1102,6 +1197,12 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         leftTimer.stop();
         jumpTimer.stop();
         shootTimer.stop();
+        invincibilityTimer.stop();
+        boss1Timer.stop();
+        boss2Timer.stop();
+        boss3Timer.stop();
+        boss4Timer.stop();
+        boss5Timer.stop();
         repaint();
     }
     public void resumeGame() //this method is used to resume the game when the button is pressed again
@@ -1116,11 +1217,16 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         if(movingLeft) leftTimer.start();
         if(!movingLeft) leftTimer.stop();
         if(shooting) shootTimer.start();
+        if(bossNum == 1) boss1Timer.start();
+        if(bossNum == 2) boss2Timer.start();
+        if(bossNum == 3) boss3Timer.start();
+        if(bossNum == 4) boss4Timer.start();
+        if(bossNum == 5) boss5Timer.start();
         repaint();
     }
     public void drawBoss1(Graphics g) //this method draws boss 1, when level 1 is being played
     {
-        g.drawImage(boss1Normal, 448,120,224,378, null);
+
     }
     public void drawBoss2(Graphics g) //this method draws boss 2, when level 2 is being played
     {
@@ -1132,7 +1238,8 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
     }
     public void drawBoss4(Graphics g) //this method draws boss 4, when level 4 is being played
     {
-
+        if(!attacking) g.drawImage(boss4Normal, 448,120,224,378, null);
+        else g.drawImage(boss4Attacking, 450,130,219,368, null);
     }
     public void drawBoss5(Graphics g) //this method draws boss 5, when level 5 is being played
     {
@@ -1142,23 +1249,28 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
     {
         grabFocus();
         g.drawImage(deathScreenImage, 0, 0, 1120, 630, null);
-        g.drawImage(exitToMenu, 345, 480 , 430, 49, null);
+        g.drawImage(exitDeath, 345, 480 , 430, 49, null);
         backButton = new Rectangle(345, 480 , 430, 49);
     }
     public void winScreen(Graphics g) //this method handles when the boss' health reach 0
     {
         grabFocus();
-        //g.drawImage(deathScreenImage, 0, 0, 1120, 630, null);
-        //g.drawImage(exitToMenu, 345, 480 , 430, 49, null);
-        //backButton = new Rectangle(345, 480 , 430, 49);
-    }
-    public void exitGame() //this method is used whenever the user goes to the main menu
-    {
-        bullets = new Bullet[100000];
+        invincible = true;
+        g.drawImage(winScreenImage, 0, 0, 1120, 630, null);
+        g.drawImage(exitWin, 373, 450 , 325, 107, null);
+        backButton = new Rectangle(373, 450 , 325, 107);
     }
     public void bossHit() //this method handles when the boss is hit by the player
     {
         bossHealth -= 10;
+        repaint();
+    }
+    public void charHit()  //this method handles when the player is hit by the boss
+    {
+        liveCount--;
+        invincible = true;
+        invincibilityTimer.start();
+        repaint();
     }
     class Jumper implements ActionListener //This class activates when 'j' is pressed, and it makes the character jump
     {
@@ -1248,7 +1360,7 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
     {
         public void actionPerformed(ActionEvent e)
         {
-            bullets[bulletCount] = new Bullet(characterXVal, characterYVal, movingLeft, movingRight, facingUp, facingLeft, facingRight, characterHeight, characterWidth);
+            bullets[bulletCount] = new Bullet(characterXVal, characterYVal,true, movingLeft, movingRight, facingUp, false, facingLeft, facingRight, characterHeight, characterWidth);
             bulletCount++;
         }
     }
@@ -1256,9 +1368,11 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
     {
         int x, y;
         int charHeight, charWidth;
-        boolean movingLeft, movingUp, movingRight, lookingLeft, lookingRight;
+        boolean movingLeft, movingUp, movingRight, lookingLeft, lookingRight, movingDown;
         boolean finished;
-        public Bullet(int xVal, int yVal, boolean left, boolean right, boolean up, boolean facingLeft, boolean facingRight, int height, int width) //this constructors gets information about the user's placement and direction
+        boolean playerOwned;
+        Rectangle bossProjectile;
+        public Bullet(int xVal, int yVal, boolean playerOwnedBullet, boolean left, boolean right, boolean up, boolean down, boolean facingLeft, boolean facingRight, int height, int width) //this constructors gets information about the user's placement and direction
         {
             x = xVal;
             y = yVal;
@@ -1270,51 +1384,152 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
             charHeight = height;
             charWidth = width;
             finished = false;
+            playerOwned = playerOwnedBullet;
+            movingDown = down;
         }
         public void paintBullet(Graphics g) //this method creates the bullet and sets which image to use based on the direction
         {
             if(finished) return;
 
-            if(!movingUp && lookingRight) g.drawImage(bulletRight, x+charWidth, y + (int)(2*charHeight/5), 70, 25, null);
-            else if(!movingUp && lookingLeft) g.drawImage(bulletLeft, x-70, y + (int)(2*charHeight/5), 70, 25, null);
-            else if(movingUp && lookingLeft && !movingLeft && !movingRight) g.drawImage(bulletUp, x, y-50, 26, 70, null);
-            else if(movingUp && lookingRight && !movingLeft && !movingRight) g.drawImage(bulletUp, x + (2*charWidth/3), y-50, 26, 70, null);
-            else if(movingUp && movingRight) g.drawImage(bulletUpRight, x+charWidth, y, 50, 50, null);
-            else if(movingUp && movingLeft) g.drawImage(bulletUpLeft, x-50, y, 50, 50, null);
+            if(playerOwned)
+            {
+                if(!movingUp && lookingRight) g.drawImage(bulletRight, x+charWidth, y + (int)(2*charHeight/5), 70, 25, null);
+                else if(!movingUp && lookingLeft) g.drawImage(bulletLeft, x-70, y + (int)(2*charHeight/5), 70, 25, null);
+                else if(characterNum == 1 && movingUp && lookingLeft && !movingLeft && !movingRight) g.drawImage(bulletUp, x, y-50, 26, 70, null);
+                else if(characterNum == 1 && movingUp && lookingRight && !movingLeft && !movingRight) g.drawImage(bulletUp, x + (2*charWidth/3), y-50, 26, 70, null);
+                else if(characterNum == 2 && movingUp && !movingLeft && !movingRight) g.drawImage(bulletUp, x + (int)(characterWidth/3), y-50, 26, 70, null);
+                else if(characterNum == 3 && movingUp && !movingLeft && !movingRight) g.drawImage(bulletUp, x + (int)(characterWidth/3), y-50, 26, 70, null);
+                else if(movingUp && movingRight) g.drawImage(bulletUpRight, x+charWidth, y, 50, 50, null);
+                else if(movingUp && movingLeft) g.drawImage(bulletUpLeft, x-50, y, 50, 50, null);
+            }
+            else
+            {
+                if(movingUp && !movingRight && !movingLeft) g.drawImage(boss4ProjectileUp, x - charWidth/2, y - charHeight/2, charWidth, charHeight, null);
+                else if(movingUp && movingRight) g.drawImage(boss4ProjectileUpRight, x, y - charHeight/2, charWidth, charHeight, null);
+                else if(movingRight && !movingDown && !movingUp) g.drawImage(boss4ProjectileRight, x, y - charHeight/2, charWidth, charHeight, null);
+                else if(movingDown && movingRight) g.drawImage(boss4ProjectileDownRight, x, y, charWidth, charHeight, null);
+                else if(movingDown && !movingLeft && !movingRight) g.drawImage(boss4ProjectileDown, x - charWidth/2, y, charWidth, charHeight, null);
+                else if(movingDown && movingLeft) g.drawImage(boss4ProjectileDownLeft, x - charWidth/2, y, charWidth, charHeight, null);
+                else if(movingLeft && !movingDown && !movingUp) g.drawImage(boss4ProjectileLeft, x - charWidth/2, y, charWidth, charHeight, null);
+                else if(movingLeft && movingUp) g.drawImage(boss4ProjectileUpLeft, x - charWidth/2, y - charWidth/2, charWidth, charHeight, null);
+            }
         }
         public void moveBullet() //this method makes each bullet move in whatever direction it is headed in
         {
-            if(x < 0 || x > 1120 || y < 0 || y > 630) finished = true;
+            if(x < 0 || x > 1120 || y < 0 || y > 750) finished = true;
+
+            //if(!playerOwned && (y < 0 || y > characterYVal + characterHeight)) finished = true;
+
+            if(!playerOwned)
+            {
+                if(movingUp && !movingRight && !movingLeft)
+                {
+                    y -= 5;
+                    bossProjectile = new Rectangle(x - charWidth/2, y - charHeight/2, charWidth, charHeight);
+                }
+                else if(movingUp && movingRight)
+                {
+                    x += 3;
+                    y -= 3;
+                    bossProjectile = new Rectangle(x, y - charHeight/2, charWidth, charHeight);
+                }
+                else if(movingRight && !movingDown && !movingUp)
+                {
+                    x += 5;
+                    bossProjectile = new Rectangle(x, y - charHeight/2, charWidth, charHeight);
+                }
+                else if(movingDown && movingRight)
+                {
+                    x += 3;
+                    y += 3;
+                    bossProjectile = new Rectangle(x, y, charWidth, charHeight);
+                }
+                else if(movingDown && !movingLeft && !movingRight)
+                {
+                    y += 5;
+                    bossProjectile = new Rectangle(x - charWidth/2, y, charWidth, charHeight);
+                }
+                else if(movingDown && movingLeft)
+                {
+                    y += 3;
+                    x -= 3;
+                    bossProjectile = new Rectangle(x - charWidth/2, y, charWidth, charHeight);
+                }
+                else if(movingLeft && !movingDown && !movingUp)
+                {
+                    x -= 5;
+                    bossProjectile = new Rectangle(x - charWidth/2, y, charWidth, charHeight);
+                }
+                else if(movingLeft && movingUp)
+                {
+                    x -= 3;
+                    y -= 3;
+                    bossProjectile = new Rectangle(x - charWidth/2, y - charWidth/2, charWidth, charHeight);
+                }
+                if(bossProjectile.intersects(charHitBox) && !invincible) charHit();
+                return;
+            }
 
             if(finished) return;
             if(!movingUp && lookingRight)
             {
                 x += 4;
-                /*
                 if(bossHitBox.intersects(new Rectangle(x+charWidth, y + (int)(2*charHeight/5), 70, 25)))
                 {
                     finished = true;
                     bossHit();
                 }
-                */
+
             }
             else if(!movingUp && lookingLeft)
             {
                 x -= 4;
+                if(bossHitBox.intersects(new Rectangle(x-70, y + (int)(2*charHeight/5), 70, 25)))
+                {
+                    finished = true;
+                    bossHit();
+                }
             }
             else if(movingUp && !movingRight && !movingLeft)
             {
                 y -= 4;
+
+                if(lookingLeft)
+                {
+                    if(bossHitBox.intersects(new Rectangle(x, y-50, 26, 70)))
+                    {
+                        finished = true;
+                        bossHit();
+                    }
+                }
+                else if(lookingRight)
+                {
+                    if(bossHitBox.intersects(new Rectangle(x + (2*charWidth/3), y-50, 26, 70)))
+                    {
+                        finished = true;
+                        bossHit();
+                    }
+                }
             }
             else if(movingUp && movingRight)
             {
                 x += 2;
                 y -= 2;
+                if(bossHitBox.intersects(new Rectangle(x+charWidth, y, 50, 50)))
+                {
+                    finished = true;
+                    bossHit();
+                }
             }
             else if(movingUp && movingLeft)
             {
                 x -= 2;
                 y -= 2;
+                if(bossHitBox.intersects(new Rectangle(x-50, y, 50, 50)))
+                {
+                    finished = true;
+                    bossHit();
+                }
             }
         }
     }
@@ -1328,6 +1543,75 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
                 bullets[i].moveBullet();
             }
             repaint();
+        }
+    }
+    class Invincible implements ActionListener //this class activates after the player is hit and gives them temporary invincibility
+    {
+        public void actionPerformed(ActionEvent e) //this method activates after the player is hit and gives them temporary invincibility
+        {
+            invincible = false;
+            invincibilityTimer.stop();
+        }
+    }
+    class Attacking implements ActionListener //this class activates after the player is hit and gives them temporary invincibility
+    {
+        public void actionPerformed(ActionEvent e) //this method activates after the player is hit and gives them temporary invincibility
+        {
+            attacking = false;
+            attackTimer.stop();
+        }
+    }
+    class Boss1 implements ActionListener
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+
+        }
+    }
+    class Boss2 implements ActionListener
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+
+        }
+    }
+    class Boss3 implements ActionListener
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+
+        }
+    }
+    class Boss4 implements ActionListener
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+            attacking = true;
+            attackTimer.start();
+            bullets[bulletCount] = new Bullet(560, 120, false, false, false, true, false, false, false, 213, 78);
+            bulletCount++;
+            bullets[bulletCount] = new Bullet(672, 120, false,false, true, true, false, false, false, 177, 174);
+            bulletCount++;
+            bullets[bulletCount] = new Bullet(672, 309, false, false, true, false, false, false, false, 78, 213);
+            bulletCount++;
+            bullets[bulletCount] = new Bullet(672, 498, false, false, true, false, true, false, false, 177, 174);
+            bulletCount++;
+            bullets[bulletCount] = new Bullet(560, 498, false, false, false, false, true, false, false, 213, 78);
+            bulletCount++;
+            bullets[bulletCount] = new Bullet(378, 498, false, true, false, false, true, false, false, 177, 174);
+            bulletCount++;
+            bullets[bulletCount] = new Bullet(378, 309, false, true, false, false, false, false, false, 78, 213);
+            bulletCount++;
+            bullets[bulletCount] = new Bullet(378, 120, false, true, false, true, false, false, false, 177, 174);
+            bulletCount++;
+            repaint();
+        }
+    }
+    class Boss5 implements ActionListener
+    {
+        public void actionPerformed(ActionEvent e)
+        {
+
         }
     }
 }
