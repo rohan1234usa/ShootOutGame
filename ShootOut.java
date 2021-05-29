@@ -10,7 +10,7 @@ import javax.swing.*;
 
 public class ShootOut //This class makes the JFrame and runs the panels
 {
-    public static void main(String[] args) //The main
+    public static void main(String[] args) //The main - runs everything
     {
         ShootOut game = new ShootOut();
         game.createAndShowGUI();
@@ -94,7 +94,6 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
     }
     class MainPanel extends JPanel //this class is used to set the background image of the main panel
     {
-
         Image backgroundImage;
         public MainPanel(Image img) //this constructor is used to bring the image into the class and set its dimension and size
         {
@@ -105,7 +104,6 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
             setMaximumSize(size);
             setSize(size);
         }
-
         public void paintComponent(Graphics g) //this method draws the background image
         {
             g.drawImage(backgroundImage, 0, 0, 1120, 630, null);
@@ -150,13 +148,11 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
     }
     class LevelsPanel extends JPanel //this class is used to set the background image of the levels panel
     {
-
         Image backgroundImage;
         public LevelsPanel(Image img) //this constructor is used to bring the image into the class and set its dimension and size
         {
             backgroundImage = img;
         }
-
         public void paintComponent(Graphics g) //this method draws the background image
         {
             g.drawImage(backgroundImage, 0, 0, 1120, 610, null);
@@ -233,14 +229,6 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
         merciless.addActionListener(cbListener);
         merciless.setSelected(false);
 
-        /*
-        safetyLabel.setBounds(203, 330, 135, 90);
-        easyLabel.setBounds(348, 330, 135, 90);
-        normalLabel.setBounds(493, 330, 135, 90);
-        hardLabel.setBounds(638, 330, 135, 90);
-        mercilessLabel.setBounds(783, 330, 135, 90);
-        */
-
         safety.setBounds(223, 400, 90, 90);
         easy.setBounds(372, 400, 80, 90);
         normal.setBounds(509, 400, 100, 90);
@@ -290,13 +278,11 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
     }
     class PowerUpPanel extends JPanel //this class is used to set the background image of the power ups panel
     {
-
         Image backgroundImage;
         public PowerUpPanel(Image img) //this constructor is used to bring the image into the class and set its dimension and size
         {
             backgroundImage = img;
         }
-
         public void paintComponent(Graphics g) //this method draws the background image
         {
             g.drawImage(backgroundImage, 0, 0, 1120, 610, null);
@@ -306,7 +292,6 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
     public void buildPowerUpCard() //this method makes the power up card
     {
         powerUpsCard = new PowerUpPanel(powerUpBackground);
-        //powerUpsCard = new PowerUpPanel(instructionsBackground);
         powerUpsCard.setVisible(true);
         powerUpsCard.setLayout(null);
 
@@ -340,13 +325,11 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
     }
     class CharacterSelectPanel extends JPanel //this class is used to set the background image of the character select panel
     {
-
         Image backgroundImage;
         public CharacterSelectPanel(Image img) //this constructor is used to bring the image into the class and set its dimension and size
         {
             backgroundImage = img;
         }
-
         public void paintComponent(Graphics g) //this method draws the background image
         {
             g.drawImage(backgroundImage, 0, 0, 1120, 610, null);
@@ -364,13 +347,6 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
 
         characterSelectCard = new CharacterSelectPanel(characterSelectBackground);
         characterSelectCard.setLayout(null);
-
-        JLabel charLabel = new JLabel("Select Character:");
-        charLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        charLabel.setPreferredSize(new Dimension(20,50));
-        charLabel.setFont(new Font("Serif", Font.PLAIN, 30));
-        charLabel.setBounds(475, 400, 200, 200);
-        //characterSelectCard.add(charLabel);
 
         char1 = new JCheckBox("Captain Cup");
         char2 = new JCheckBox("Private Penguin");
@@ -538,9 +514,9 @@ class ShootOutGame implements ActionListener //runs the game and menus - uses a 
             bossCard.resetGame(lives, bossNum, charNum, speed, damage, teleport);
         }
     }
-    class CheckBoxListener implements ActionListener //this class makes the checkboxes used to select difficulty and character
+    class CheckBoxListener implements ActionListener //this class makes the checkboxes used to select difficulty, character, and power-up
     {
-        public void actionPerformed(ActionEvent e) //this method makes the checkboxes used to select difficulty and character
+        public void actionPerformed(ActionEvent e) //this method makes the checkboxes used to select difficulty, character, and power-up
         {
             String cmd = e.getActionCommand();
             switch (cmd) {
@@ -702,7 +678,7 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
     int boss1Num, boss1RandomNum, boss2Num, boss3Num, boss4Num, boss5Num;
     int[] boss3Array;
     Image healthBarImage, bossHealthBarImage, pauseIconImage, playIconImage, backArrowImage, winScreenImage, deathScreenImage, exitDeath, exitWin;
-    Image char1DuckingRight, char1DuckingLeft, char1NormalRight, char1NormalLeft, char1NormalUpRight, char1NormalUpLeft, char1NormalDiagonalRight, char1NormalDiagonalLeft, char1RunningRight, char1RunningLeft, char1RunningUpRight, char1RunningUpLeft;
+    Image char1DuckingRight, char1DuckingLeft, char1NormalRight, char1NormalLeft, char1NormalUpRight, char1NormalUpLeft, char1RunningRight, char1RunningLeft, char1RunningUpRight, char1RunningUpLeft;
     Image char2DuckingRight, char2DuckingLeft, char2NormalRight, char2NormalLeft, char2RunningRight, char2RunningLeft;
     Image char3DuckingRight, char3DuckingLeft, char3NormalRight, char3NormalLeft, char3RunningRight, char3RunningLeft;
     Image bulletLeft, bulletUpLeft, bulletUp, bulletUpRight, bulletRight;
@@ -762,8 +738,6 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         char1NormalLeft = new ImageIcon("cuphead_normal_left.png").getImage();
         char1NormalUpRight = new ImageIcon("cuphead_up_right.png").getImage();
         char1NormalUpLeft = new ImageIcon("cuphead_up_left.png").getImage();
-        //char1NormalDiagonalRight = new ImageIcon("cuphead_diagonal_right.png").getImage();
-        //char1NormalDiagonalLeft = new ImageIcon("cuphead_diagonal_left.png").getImage();
         char1RunningRight = new ImageIcon("cuphead_running_right.png").getImage();
         char1RunningLeft = new ImageIcon("cuphead_running_left.png").getImage();
         char1RunningUpRight = new ImageIcon("cuphead_running_up_right.png").getImage();
@@ -960,6 +934,13 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         else speedNum = 1;
         grabFocus();
 
+        setBossValues(whichBoss);
+
+        repaint();
+    }
+
+    public void setBossValues(int whichBoss) //this method sets the boss health and hitbox
+    {
         if(whichBoss == 1)
         {
             bossHealth = 1000;
@@ -970,8 +951,8 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         }
         else if(whichBoss == 2)
         {
-            bossHealth = 1000;
-            startingBossHealth = 1000;
+            bossHealth = 1400;
+            startingBossHealth = 1400;
         }
         else if(whichBoss == 3)
         {
@@ -988,16 +969,14 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         }
         else if(whichBoss == 5)
         {
-            //drawImage(boss5Normal,767, 162, 253, 358, null);
             bossHealth = 1600;
             startingBossHealth = 1600;
             int[] xValues = {784, 773, 860, 860, 797, 1010, 990};
             int[] yValues = {162, 362, 368, 450, 510, 520, 175};
             bossHitBox = new Polygon(xValues, yValues, xValues.length);
         }
-
-        repaint();
     }
+
     public void paintComponent(Graphics g) //this creates the objects inside the frame such as the boss, main character, background, health bar, pause button, and exit button
     {
         super.paintComponent(g);
@@ -1232,9 +1211,6 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         {
             switch(key)
             {
-                case KeyEvent.VK_W:
-                    //facingUp = true;
-                    break;
                 case KeyEvent.VK_A:
                     if(!facingUp) movingLeft = true;
                     break;
@@ -1461,7 +1437,7 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
         if(bossNum == 5) boss5Timer.start();
         repaint();
     }
-    public void paintBullets(Graphics g) //this method loads and paints every bullet that has been loaded
+    public void paintBullets(Graphics g) //this method individually loads and paints each bullet that has been loaded
     {
         for(int i = 0; i < bulletCount; i++)
         {
@@ -1684,12 +1660,12 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
 
             if(whichBoss == 0)
             {
-                if(!movingUp && lookingRight) g.drawImage(bulletRight, x+charWidth, y + (int)(2*charHeight/5), 70, 25, null);
-                else if(!movingUp && lookingLeft) g.drawImage(bulletLeft, x-70, y + (int)(2*charHeight/5), 70, 25, null);
+                if(!movingUp && lookingRight) g.drawImage(bulletRight, x+charWidth, y + (2*charHeight/5), 70, 25, null);
+                else if(!movingUp && lookingLeft) g.drawImage(bulletLeft, x-70, y + (2*charHeight/5), 70, 25, null);
                 else if(characterNum == 1 && movingUp && lookingLeft && !movingLeft && !movingRight) g.drawImage(bulletUp, x, y-50, 26, 70, null);
                 else if(characterNum == 1 && movingUp && lookingRight && !movingLeft && !movingRight) g.drawImage(bulletUp, x + (2*charWidth/3), y-50, 26, 70, null);
-                else if(characterNum == 2 && movingUp && !movingLeft && !movingRight) g.drawImage(bulletUp, x + (int)(characterWidth/3), y-50, 26, 70, null);
-                else if(characterNum == 3 && movingUp && !movingLeft && !movingRight) g.drawImage(bulletUp, x + (int)(characterWidth/3), y-50, 26, 70, null);
+                else if(characterNum == 2 && movingUp && !movingLeft && !movingRight) g.drawImage(bulletUp, x + (characterWidth/3), y-50, 26, 70, null);
+                else if(characterNum == 3 && movingUp && !movingLeft && !movingRight) g.drawImage(bulletUp, x + (characterWidth/3), y-50, 26, 70, null);
                 else if(movingUp && movingRight) g.drawImage(bulletUpRight, x+charWidth, y, 50, 50, null);
                 else if(movingUp && movingLeft) g.drawImage(bulletUpLeft, x-50, y, 50, 50, null);
             }
@@ -1794,7 +1770,7 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
                 }
                 else
                 {
-                    y += 4;
+                    y += 6;
                     if(y > 450) finished = true;
                     bossProjectile = new Rectangle(x, y, charWidth, charHeight);
                 }
@@ -1803,14 +1779,14 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
             {
                 if(movingDown)
                 {
-                    y += 5;
+                    y += 6;
                     if(y > 454) finished = true;
                     bossProjectile = new Rectangle(x, y, charWidth, charHeight);
                     if(bossProjectile.intersects(charHitBox) && !invincible && !paused) charHit();
                 }
                 else if(movingRight)
                 {
-                    x += 5;
+                    x += 6;
                     if(x > 700 - 1026)
                     {
                         finished = true;
@@ -1827,8 +1803,8 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
             if(finished) return;
             if(!movingUp && lookingRight)
             {
-                x += 4*speedNum;
-                if(bossHitBox.intersects(new Rectangle(x+charWidth, y + (int)(2*charHeight/5), 70, 25)))
+                x += 6*speedNum;
+                if(bossHitBox.intersects(new Rectangle(x+charWidth, y + (2*charHeight/5), 70, 25)))
                 {
                     finished = true;
                     bossHit();
@@ -1837,8 +1813,8 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
             }
             else if(!movingUp && lookingLeft)
             {
-                x -= 4*speedNum;
-                if(bossHitBox.intersects(new Rectangle(x-70, y + (int)(2*charHeight/5), 70, 25)))
+                x -= 6*speedNum;
+                if(bossHitBox.intersects(new Rectangle(x-70, y + (2*charHeight/5), 70, 25)))
                 {
                     finished = true;
                     bossHit();
@@ -1846,7 +1822,7 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
             }
             else if(movingUp && !movingRight && !movingLeft)
             {
-                y -= 4*speedNum;
+                y -= 6*speedNum;
 
                 if(lookingLeft)
                 {
@@ -1867,8 +1843,8 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
             }
             else if(movingUp && movingRight)
             {
-                x += 2*speedNum;
-                y -= 2*speedNum;
+                x += 3*speedNum;
+                y -= 3*speedNum;
                 if(bossHitBox.intersects(new Rectangle(x+charWidth, y, 50, 50)))
                 {
                     finished = true;
@@ -1877,8 +1853,8 @@ class BossCardPanel extends JPanel implements KeyListener, MouseListener, MouseM
             }
             else if(movingUp && movingLeft)
             {
-                x -= 2*speedNum;
-                y -= 2*speedNum;
+                x -= 3*speedNum;
+                y -= 3*speedNum;
                 if(bossHitBox.intersects(new Rectangle(x-50, y, 50, 50)))
                 {
                     finished = true;
